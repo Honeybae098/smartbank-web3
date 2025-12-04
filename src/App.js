@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.jsx
+import React, { useState } from 'react';
+import HomePage from './pages/Home';
+import DepositPage from './pages/Deposit';
+import WithdrawPage from './pages/Withdraw';
+import DashboardPage from './pages/Dashboard';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default function App() {
+  const [currentPage, setCurrentPage] = useState('home');
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return <HomePage onNavigate={setCurrentPage} />;
+      case 'deposit':
+        return <DepositPage onNavigate={setCurrentPage} />;
+      case 'withdraw':
+        return <WithdrawPage onNavigate={setCurrentPage} />;
+      case 'dashboard':
+        return <DashboardPage onNavigate={setCurrentPage} />;
+      default:
+        return <HomePage onNavigate={setCurrentPage} />;
+    }
+  };
+
+  return <div>{renderPage()}</div>;
 }
-
-export default App;
