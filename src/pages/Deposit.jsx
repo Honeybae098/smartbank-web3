@@ -1,26 +1,66 @@
-// src/pages/Deposit.jsx
 import React, { useState } from 'react';
-import { ArrowDownCircle } from 'lucide-react';
+import { ArrowDownCircle, AlertCircle, ExternalLink } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import InfoCard from '../components/InfoCard';
+import { useWeb3 } from '../contexts/Web3Context';
 
 const DepositPage = ({ onNavigate }) => {
   const [amount, setAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [txHash, setTxHash] = useState('');
+  
+  const { 
+    isConnected, 
+    connectWallet, 
+    deposit, 
+    balance,
+    smartBankBalance 
+  } = useWeb3();
 
-  const handleDeposit = () => {
-    if (!amount || parseFloat(amount) <= 0) {
-      alert('Please enter a valid amount');
+  const handleDeposit = async () => {
+    if (!isConnected) {
+      alert('Please connect your wallet first');
       return;
     }
+
+    if (!amount || parseFloat(amount) <= 0) {
+      setError('Please enter a valid amount');
+      return;
+    }
+
+    if (parseFloat(amount) > parseFloat(balance)) {
+      setError('Insufficient balance');
+      return;
+    }
+
     setIsLoading(true);
+    setError('');
+    setTxHash('');
     
-    // TODO: Web3 Integration - Phase 3
-    setTimeout(() => {
-      setIsLoading(false);
-      alert(`Deposit of ${amount} ETH initiated`);
+    try {
+      const transactionHash = await deposit(amount);
+      setTxHash(transactionHash);
+      alert(`Deposit of ${amount} ETH initiated! Transaction: ${transactionHash}`);
       setAmount('');
-    }, 1500);
+    } catch (error) {
+      console.error('Deposit failed:', error);
+      setError(error.message || 'Deposit failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleConnectWallet = async () => {
+    try {
+      await connectWallet();
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+    }
+  };
+
+  const formatAddress = (address) => {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
   return (
@@ -38,6 +78,54 @@ const DepositPage = ({ onNavigate }) => {
             Securely deposit your ETH into the SmartBank vault
           </p>
 
+          {/* Wallet Connection Status */}
+          {!isConnected && (
+            <div className="bg-red-900 bg-opacity-30 border border-red-400 border-opacity-30 rounded-lg p-4 mb-6">
+              <div className="flex items-center space-x-2">
+                <AlertCircle className="w-5 h-5 text-red-400" />
+                <p className="text-red-200 text-sm">
+                  Please connect your MetaMask wallet to continue
+                </p>
+              </div>
+              <button
+                onClick={handleConnectWallet}
+                className="mt-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                Connect Wallet
+              </button>
+            </div>
+          )}
+
+          {/* Error Display */}
+          {error && (
+            <div className="bg-red-900 bg-opacity-30 border border-red-400 border-opacity-30 rounded-lg p-4 mb-6">
+              <div className="flex items-center space-x-2">
+                <AlertCircle className="w-5 h-5 text-red-400" />
+                <p className="text-red-200 text-sm">{error}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Transaction Hash Display */}
+          {txHash && (
+            <div className="bg-green-900 bg-opacity-30 border border-green-400 border-opacity-30 rounded-lg p-4 mb-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <ExternalLink className="w-5 h-5 text-green-400" />
+                  <p className="text-green-200 text-sm">Transaction submitted!</p>
+                </div>
+                <a
+                  href={`https://sepolia.etherscan.io/tx/${txHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green-300 hover:text-green-100 underline text-sm"
+                >
+                  View on Etherscan
+                </a>
+              </div>
+            </div>
+          )}
+
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -48,10 +136,19 @@ const DepositPage = ({ onNavigate }) => {
                 step="0.001"
                 min="0"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e) => {
+                  setAmount(e.target.value);
+                  setError(''); // Clear error when user types
+                }}
                 placeholder="0.0"
                 className="w-full bg-white bg-opacity-10 border border-white border-opacity-30 rounded-lg px-4 py-3 text-white text-xl placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+                disabled={!isConnected || isLoading}
               />
+              {isConnected && (
+                <p className="text-gray-400 text-sm mt-2">
+                  Available: {parseFloat(balance).toFixed(4)} ETH
+                </p>
+              )}
             </div>
 
             <div className="bg-blue-900 bg-opacity-30 border border-blue-400 border-opacity-30 rounded-lg p-4">
@@ -62,7 +159,7 @@ const DepositPage = ({ onNavigate }) => {
 
             <button
               onClick={handleDeposit}
-              disabled={isLoading}
+              disabled={!isConnected || isLoading}
               className="w-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 disabled:from-gray-500 disabled:to-gray-600 text-white py-4 rounded-lg font-bold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? 'Processing...' : 'Deposit ETH'}

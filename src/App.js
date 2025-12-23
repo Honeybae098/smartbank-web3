@@ -1,11 +1,12 @@
 // src/App.jsx
 import React, { useState } from 'react';
+import { Web3Provider } from './contexts/Web3Context';
 import HomePage from './pages/Home';
 import DepositPage from './pages/Deposit';
 import WithdrawPage from './pages/Withdraw';
 import DashboardPage from './pages/Dashboard';
 
-export default function App() {
+function App() {
   const [currentPage, setCurrentPage] = useState('home');
 
   const renderPage = () => {
@@ -23,5 +24,11 @@ export default function App() {
     }
   };
 
-  return <div>{renderPage()}</div>;
+  return (
+    <Web3Provider>
+      <div>{renderPage()}</div>
+    </Web3Provider>
+  );
 }
+
+export default App;

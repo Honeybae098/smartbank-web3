@@ -7,19 +7,19 @@ const HomePage = ({ onNavigate }) => {
   const features = [
     {
       icon: Lock,
-      iconColor: "blue-400",
+      iconColor: "text-blue-600",
       title: "Secure Storage",
       description: "Your ETH is protected by smart contract security. Only you can access and withdraw your funds."
     },
     {
       icon: Globe,
-      iconColor: "purple-400",
+      iconColor: "text-purple-600",
       title: "Borderless Access",
       description: "Access your funds from anywhere in the world, anytime. No intermediaries, no restrictions."
     },
     {
       icon: TrendingUp,
-      iconColor: "green-400",
+      iconColor: "text-green-600",
       title: "Full Transparency",
       description: "Track every transaction on the blockchain. Immutable history and real-time balance updates."
     }
@@ -32,37 +32,25 @@ const HomePage = ({ onNavigate }) => {
     "Protection against common user mistakes"
   ];
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
-      <nav className="bg-black bg-opacity-30 backdrop-blur-md border-b border-white border-opacity-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <Shield className="w-8 h-8 text-blue-400" />
-              <span className="text-2xl font-bold text-white">SmartBank</span>
-            </div>
-            <button 
-              onClick={() => onNavigate('deposit')}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105"
-            >
-              Launch App
-            </button>
-          </div>
-        </div>
-      </nav>
 
+  return (
+    <div className="bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+          <div className="flex justify-center items-center space-x-2 mb-6">
+            <Shield className="w-10 h-10 text-blue-600" />
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900">SmartBank</h1>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-semibold text-gray-800 mb-6">
             Your Decentralized Banking Solution
-          </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
             Store, manage, and track your ETH securely with blockchain technology. 
             Transparent, borderless, and always in your control.
           </p>
           <button 
             onClick={() => onNavigate('deposit')}
-            className="mt-8 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
+            className="btn-primary text-lg px-8 py-3 transform hover:scale-105"
           >
             Get Started
           </button>
@@ -74,15 +62,34 @@ const HomePage = ({ onNavigate }) => {
           ))}
         </div>
 
-        <div className="mt-20 bg-white bg-opacity-5 backdrop-blur-md p-12 rounded-2xl border border-white border-opacity-10">
-          <h2 className="text-3xl font-bold text-white text-center mb-8">Why SmartBank?</h2>
-          <div className="grid md:grid-cols-2 gap-6 text-gray-300">
+        <div className="mt-20 card">
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">Why SmartBank?</h2>
+          <div className="grid md:grid-cols-2 gap-6 text-gray-600">
             {benefits.map((benefit, index) => (
               <div key={index} className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
+                <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
                 <p>{benefit}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-16 text-center">
+          <h3 className="text-2xl font-semibold text-gray-900 mb-4">Ready to get started?</h3>
+          <p className="text-gray-600 mb-6">Experience the future of decentralized banking today.</p>
+          <div className="flex justify-center space-x-4">
+            <button 
+              onClick={() => onNavigate('deposit')}
+              className="btn-primary"
+            >
+              Start Depositing
+            </button>
+            <button 
+              onClick={() => onNavigate('dashboard')}
+              className="btn-secondary"
+            >
+              View Dashboard
+            </button>
           </div>
         </div>
       </div>
